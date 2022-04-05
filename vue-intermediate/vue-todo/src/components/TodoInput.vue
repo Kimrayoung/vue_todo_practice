@@ -16,7 +16,9 @@
 export default {
     data : function() {
         return {
+            // 새로운 목록을 생성할 때 todoInput만의 새로운 데이터인 newTodoItem를 바로 todoItem에 추가해주는 것이 좋음
             newTodoItem: ""
+
         }
     },
     methods: {
@@ -27,11 +29,11 @@ export default {
             //여기서 문제점 --> 바로바로 아래 todolist에 반영이 되지 않고 새로고침을 눌러야 반영이 됨 --> 이유 : todoLIst와 todoInput이 연결되어있지 않기 때문
             //여기에 저장하는 로직
             if (this.newTodoItem !== '') {
-                let obj = {
-                    completed: false, //check되어있는지 아닌지 확인하는 불린값
-                    item : this.newTodoItem
-                };
-                localStorage.setItem(this.newTodoItem, JSON.stringify(obj)); //stringify는 자바스크립트 객체를 스트링의 형태로 변환
+                //지금 바로 위 컴포넌트인 App.vue로 newTodoItem을 보내줘야 함
+                //이유 : todoList를 바로 업데이트 하기 위해서는 App.vue로 입력된 목록을 보내서 다시 TodoList로 내려줘야 하기 때문
+                // this.$emit('이벤트 이름', 인자1, 인자2, 인자3,,,,)
+                //$emit을 하게되면 todoInput이라는 컴포넌트에서 addTodoItem이라는 이벤트를 발생시킴, 그리고 그게  App.vue로 올라와서 매핑시키면 메서드가 실행됨
+                this.$emit('addTodoItem',this.newTodoItem);
                 this.clearInput();
             }
             
