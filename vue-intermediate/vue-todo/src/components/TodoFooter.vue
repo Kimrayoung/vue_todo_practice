@@ -7,11 +7,11 @@
 <script>
 export default {
     methods: {
-        clearTodo: function() {
-            this.$emit('clearAll');
-        }
-    }
-}
+        clearTodo() {
+            this.$store.commit("clearAllItems");
+        },
+    },
+};
 </script>
 
 <style scoped>
@@ -25,7 +25,7 @@ export default {
 }
 .clearAllBtn {
     color: #e20303;
-  /* 추가 */
+    /* 추가 */
     display: block;
 }
 </style>

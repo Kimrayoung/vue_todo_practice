@@ -5,7 +5,7 @@
             <!-- 여기서 index는 v-for의 고유의 문법으로 몇 번째인지 인덱스 번호를 부여해준다 -->
             <!-- 즉, v-for안에서 todoItem과 index로 데이터를 접근할 수 있다 -->
             <li
-                v-for="(todoItem, index) in propsdata"
+                v-for="(todoItem, index) in this.$store.state.todoItems"
                 v-bind:key="todoItem.item"
                 class="shadow"
             >
@@ -35,16 +35,23 @@
 
 <script>
 export default {
-    props: ["propsdata"],
     methods: {
-        removeTodo: function (todoItem, index) {
+        removeTodo(todoItem, index) {
             //즉, 삭제하라는 클릭이벤트를 removeItem이라는 이름으로 받아줌, 그리고 App.vue에 넘겨줌 그리고 App.vue는 이 이벤트를 받으면 매핑된 함수를 실행시켜준다.
-            this.$emit("removeItem", todoItem, index);
-            console.log(todoItem);
+            //클릭이 되면 removeTodo라는 함수가 발생되고 removeItem이라는 이름의 이벤트가 발생한다 그리고 App.vue에서 이 이벤트를 removeOneItem으로 받는다.
+            // this.$emit("removeItem", todoItem, index);
+            // console.log(todoItem);
+            //즉, 이 함수에서 removeOneItem이라는 이벤트를 발생시킨다, 그리고 이 이벤트가 todoItem과 index를 인자로 넘겨줌
+            //이 removeOneItem이라는 이벤트를 store.js에서 removeOneItem
+            //commit -> mutation을 동작시키기 위한 api
+            //{todoItem, index} ==> const obj= {todoItem : todoItem , index : index}
+            this.$store.commit("removeOneItem", { todoItem, index });
         },
-        toggleComplete: function (todoItem, index) {
+        toggleComplete(todoItem, index) {
             //할 일 완료 기능
-            this.$emit("toggleItem", todoItem, index);
+            // this.$emit("toggleItem", todoItem, index);
+            //여기에서는 app.vue에 이벤트를 연결시켜주는 과정 필요없이 바로 store.js의 이벤트와 바로 매핑을 시켜주면 됨
+            this.$store.commit("toggleOneItem", { todoItem, index });
         },
     },
 };

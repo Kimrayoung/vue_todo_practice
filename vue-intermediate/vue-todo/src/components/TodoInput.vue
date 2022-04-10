@@ -47,24 +47,21 @@ export default {
         };
     },
     methods: {
-        addTodo: function () {
-            //여기서 this는 todoInput을 가르킴
+        addTodo() {
             //TodoHeader, TodoInput, TodoList, TodoFooter은 App.vue에 등록이 되어있고 이 App.vue는 main.js에 등록이 되어있음 결과적으로 App하나에 등록
-            // console.log(this.newTodoItem);
-            //여기서 문제점 --> 바로바로 아래 todolist에 반영이 되지 않고 새로고침을 눌러야 반영이 됨 --> 이유 : todoLIst와 todoInput이 연결되어있지 않기 때문
-            //여기에 저장하는 로직
             if (this.newTodoItem !== "") {
-                //지금 바로 위 컴포넌트인 App.vue로 newTodoItem을 보내줘야 함
-                //이유 : todoList를 바로 업데이트 하기 위해서는 App.vue로 입력된 목록을 보내서 다시 TodoList로 내려줘야 하기 때문
-                // this.$emit('이벤트 이름', 인자1, 인자2, 인자3,,,,)
-                //$emit을 하게되면 todoInput이라는 컴포넌트에서 addTodoItem이라는 이벤트를 발생시킴, 그리고 그게  App.vue로 올라와서 매핑시키면 메서드가 실행됨
-                this.$emit("addTodoItem", this.newTodoItem);
+                //newTodoItem이 모델링(계속 감시)하고 있고 이 model이 연관되어있는 버튼을 누르면 해당 함수가 실행된다.
+                //그리고 해당함수의 emit처럼 이벤트를 올려주기 위해서 this.$store.commit을 해준다.
+                //this.$emit('addTodoItem', this.newTodoItem); -> addTodoItem이라는 이벤트를 발생시켜주고 그 이벤트에 데이터를 바인딩
+                //위의 emit처럼 데이터를 넘겨줘야 함
+                //아래 내용은 store.js에 잇는 addOneItem이라는 함수를 동작시킨 다는 것을 의미함
+                this.$store.commit("addOneItem", this.newTodoItem);
                 this.clearInput();
             } else {
                 this.showModal = true;
             }
         },
-        clearInput: function () {
+        clearInput() {
             this.newTodoItem = "";
         },
     },
