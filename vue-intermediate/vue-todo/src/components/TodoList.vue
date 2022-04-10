@@ -5,7 +5,7 @@
             <!-- 여기서 index는 v-for의 고유의 문법으로 몇 번째인지 인덱스 번호를 부여해준다 -->
             <!-- 즉, v-for안에서 todoItem과 index로 데이터를 접근할 수 있다 -->
             <li
-                v-for="(todoItem, index) in this.$store.state.todoItems"
+                v-for="(todoItem, index) in this.todoItems"
                 v-bind:key="todoItem.item"
                 class="shadow"
             >
@@ -15,7 +15,7 @@
                 <i
                     class="checkBtn fa-solid fa-check"
                     v-bind:class="{ checkBtnCompleted: todoItem.completed }"
-                    v-on:click="toggleComplete(todoItem, index)"
+                    v-on:click="toggleComplete({ todoItem, index })"
                 ></i>
                 <!-- v-bind:class은 기존의 html속성에다가  동적인 값을 부여하는 것을 의미함
                 즉, 여기서는 todoItem.completed에 따라서 속성이 부여됨, 만약에 completed가 false이면 이 class는 없어짐 true라면 textCompleted만 남아서 속성이 적용됨-->
@@ -24,7 +24,7 @@
                 }}</span>
                 <span
                     class="removeBtn"
-                    v-on:click="removeTodo(todoItem, index)"
+                    v-on:click="removeTodo({ todoItem, index })"
                 >
                     <i class="fa-solid fa-trash-can"></i>
                 </span>
@@ -34,25 +34,33 @@
 </template>
 
 <script>
+import { mapGetters, mapMutations } from "vuex";
+
 export default {
     methods: {
-        removeTodo(todoItem, index) {
-            //즉, 삭제하라는 클릭이벤트를 removeItem이라는 이름으로 받아줌, 그리고 App.vue에 넘겨줌 그리고 App.vue는 이 이벤트를 받으면 매핑된 함수를 실행시켜준다.
-            //클릭이 되면 removeTodo라는 함수가 발생되고 removeItem이라는 이름의 이벤트가 발생한다 그리고 App.vue에서 이 이벤트를 removeOneItem으로 받는다.
-            // this.$emit("removeItem", todoItem, index);
-            // console.log(todoItem);
-            //즉, 이 함수에서 removeOneItem이라는 이벤트를 발생시킨다, 그리고 이 이벤트가 todoItem과 index를 인자로 넘겨줌
-            //이 removeOneItem이라는 이벤트를 store.js에서 removeOneItem
-            //commit -> mutation을 동작시키기 위한 api
-            //{todoItem, index} ==> const obj= {todoItem : todoItem , index : index}
-            this.$store.commit("removeOneItem", { todoItem, index });
-        },
-        toggleComplete(todoItem, index) {
-            //할 일 완료 기능
-            // this.$emit("toggleItem", todoItem, index);
-            //여기에서는 app.vue에 이벤트를 연결시켜주는 과정 필요없이 바로 store.js의 이벤트와 바로 매핑을 시켜주면 됨
-            this.$store.commit("toggleOneItem", { todoItem, index });
-        },
+        ...mapMutations({
+            removeTodo: "removeOneItem", //removeTodo가 눌렸을 때(이벤트가 발생했을때 ) removeOneItem이라는 함수를 실행할래
+            //todoItem. index는 념겨주지 않아도 됨 --> 이유: 만약에 위 이벤트에서 넘겨주는 인자가 있다면 mapMutation에서 알아서 가져옴
+            //위 표현단에서 인덱스가 두개이므로 그 두개를 하나로 받기 위해서 하나로 묶어서 넘겨주는 부분이 필요하다. 즉, 객체로 묶어서  보내줘야 함
+            toggleComplete: "toggleOneItem",
+        }),
+        // removeTodo(todoItem, index) {
+        //     this.$store.commit("removeOneItem", { todoItem, index });
+        // },
+        // toggleComplete(todoItem, index) {
+        //     this.$store.commit("toggleOneItem", { todoItem, index });
+        // },
+    },
+    computed: {
+        // ...mapGetters(["storedTodoItems"]), //배열 리터럴
+        //객체 리터럴은 현재 템플릿에 매핑될 데이터의 이름과 동일하다면 배열 리터럴 사용
+        //위의 템플릿에도 storedTodoItems가 있고 여기에도 storedTodoItems가 있다면 배열 리터럴
+        ...mapGetters({
+            todoItems: "storedTodoItem",
+        }),
+        // todoItems() {
+        // return this.$store.getters.storeTodoItems;
+        // },
     },
 };
 </script>
